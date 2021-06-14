@@ -12,15 +12,27 @@ import {
 } from "react-router-dom";
 
 function App() {
-let inittodo = localStorage.getItem("todos") === null ? [] : JSON.parse(localStorage.getItem("todos"))  
+let inittodo = localStorage.getItem("todos") === null ? [] : JSON.parse(localStorage.getItem("todos"))
+const [temptodos, settemptodos] = useState(inittodo);  
 
-  const onDelete = (todo) => {
-    setTodos(todos.filter((e) => {
-      return e!==todo;
-    }));
-    localStorage.setItem("todos", JSON.stringify(todos));
+  const searchtodo = (searchkey) => {
+    if(searchkey) {
+    console.log(todos.filter(item => item.work.toLowerCase().includes(searchkey.toLowerCase())));
+    settemptodos(() => todos.filter(item => item.work.toLowerCase().includes(searchkey.toLowerCase())));
+    }
+    else {
+      settemptodos(todos);
+    }
   }
-
+  const onDelete = (todo) => {
+    let templist = todos.filter((e) => {
+      return e!==todo;
+    });
+    setTodos(templist);
+    settemptodos(templist);
+    localStorage.setItem("todos", JSON.stringify(todos));
+  
+  }
   const addtodo = (title,desc) => {
     let sno = todos.length === 0 ? 1 : todos[todos.length-1].sno + 1;
     const mytodo = {
@@ -29,6 +41,7 @@ let inittodo = localStorage.getItem("todos") === null ? [] : JSON.parse(localSto
       desc: desc
     };
     setTodos([...todos, mytodo]);
+    settemptodos(todos);
   }
   const [todos, setTodos] = useState(inittodo);
     useEffect(() => {
@@ -38,12 +51,12 @@ let inittodo = localStorage.getItem("todos") === null ? [] : JSON.parse(localSto
   return (
     <>
     <Router>
-   <Header search={true} title="My Todo List"/>
+   <Header searchtodo={searchtodo} search={true} title="My Todo List"/>
     <Switch>
           <Route exact path="/">
            <>
               <Addtodo addtolist={addtodo}/>
-             <Todos list={todos} onDelete={onDelete}/> 
+             <Todos list={temptodos} onDelete={onDelete}/> 
               </>
           </Route>
           <Route exact path="/about">
