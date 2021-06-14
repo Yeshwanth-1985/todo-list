@@ -14,6 +14,12 @@ import {
 function App() {
 let inittodo = localStorage.getItem("todos") === null ? [] : JSON.parse(localStorage.getItem("todos"))  
 
+const [gkey, setgkey] = useState("");
+
+const searchkey = (keyword) => {
+  setgkey(keyword);
+}
+
   const onDelete = (todo) => {
     setTodos(todos.filter((e) => {
       return e!==todo;
@@ -28,22 +34,24 @@ let inittodo = localStorage.getItem("todos") === null ? [] : JSON.parse(localSto
       work: title,
       desc: desc
     };
-    setTodos([...todos, mytodo]);
+    setTodos([...todos, mytodo]); 
   }
   const [todos, setTodos] = useState(inittodo);
-    useEffect(() => {
+    
+    useEffect((gkey) => {
        localStorage.setItem("todos", JSON.stringify(todos));
     }, [todos]);
 
   return (
     <>
     <Router>
-   <Header search={true} title="My Todo List"/>
+   <Header search={true} searchkey={searchkey} title="My Todo List"/>
     <Switch>
           <Route exact path="/todo-list/">
            <>
               <Addtodo addtolist={addtodo}/>
-             <Todos list={todos} onDelete={onDelete}/> 
+             { gkey.trim().length === 0 ? <Todos list={todos} onDelete={onDelete}/> :
+              <Todos list={todos.filter(item => item.work.toLowerCase().includes(gkey.toLowerCase()))} onDelete={onDelete}/> }
               </>
           </Route>
           <Route exact path="/todo-list/about">
