@@ -40,7 +40,7 @@ let inittodo = localStorage.getItem("todos") === null ? [] : JSON.parse(localSto
     <Router>
    <Header search={true} title="My Todo List"/>
     <Switch>
-          <Route exact path="/">
+          <Route exact path="/home">
            <>
               <Addtodo addtolist={addtodo}/>
              <Todos list={todos} onDelete={onDelete}/> 
